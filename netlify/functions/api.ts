@@ -7,7 +7,7 @@ const cors = require('cors'); //new
 const api = express();
 
 api.use(express.json());
-app.use(cors()); //new
+api.use(cors()); //new
 
 const router = Router();
 router.get("/hello", (req, res) => res.send("Hello World!"));
