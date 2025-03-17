@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Define an endpoint that forwards the POST request to Google Gemini
-app.post('/', async (req, res) => {
+app.post("/.netlify/functions/app", async (req, res) => {
   try {
     console.log("hello");
     // Replace with the actual Google Gemini endpoint URL
