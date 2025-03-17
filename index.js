@@ -1,22 +1,21 @@
-// Install Express via the Replit package manager or add it to your package.json
+// app.js
 
 const express = require('express');
+const serverless = require('serverless-http');
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const app = express();
-
 const cors = require('cors');
 
-app.use(cors());
+const app = express();
 
-// Middleware to parse JSON bodies from incoming requests
+app.use(cors());
 app.use(express.json());
 
-// Define an endpoint that forwards the POST request to Google Gemini
-app.post("/.netlify/functions/app", async (req, res) => {
+// Define a POST endpoint that forwards the request to Google Gemini
+app.post('/.netlify/functions/app', async (req, res) => {
   try {
     console.log("hello");
-    // Replace with the actual Google Gemini endpoint URL
+    // Replace with the actual Google Gemini endpoint URL and ensure your API key is correct
     const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyC_I38Yz4t4R8Ba3On13F2rolTv_f9Rt6w';
 
     // Forward the request data; add your authentication headers as needed
@@ -28,10 +27,8 @@ app.post("/.netlify/functions/app", async (req, res) => {
       body: JSON.stringify(req.body)
     });
     
-    // Parse the JSON response from Google Gemini
+    // Parse and send the JSON response from Google Gemini back to the client
     const data = await response.json();
-
-    // Send the received data back to the client
     res.status(response.status).json(data);
   } catch (error) {
     console.error('Error forwarding the request:', error);
@@ -39,13 +36,11 @@ app.post("/.netlify/functions/app", async (req, res) => {
   }
 });
 
+// Define a simple GET endpoint for testing purposes.
 app.get('/', (req, res) => {
   res.send('Server is up and running!');
 });
 
-// Start the server on the designated port
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
+// Export the serverless handler for deployment.
+// The serverless-http package wraps the Express app so it can be used as a serverless function.
+module.exports.handler = serverless(app);
